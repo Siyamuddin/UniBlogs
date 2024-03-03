@@ -1,5 +1,7 @@
 package com.siyamuddin.blog.blogappapis.Entity;
 
+import com.siyamuddin.blog.blogappapis.Payloads.CategoryDto;
+import com.siyamuddin.blog.blogappapis.Payloads.UserDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

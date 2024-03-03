@@ -2,6 +2,7 @@ package com.siyamuddin.blog.blogappapis.Payloads;
 
 import com.siyamuddin.blog.blogappapis.Entity.Category;
 import com.siyamuddin.blog.blogappapis.Entity.User;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -13,11 +14,12 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class PostDto {
-    @NotEmpty(message = "Title can not be empty.")
-    @Size(min = 2,message = "Title must be more than 2 charecters.")
+//    @NotEmpty(message = "Title can not be empty.")
+//    @Size(min = 2,message = "Title must be more than 2 charecters.")
+    private Integer postId;
     private String title;
-    @NotEmpty(message = "Content Can not be Empty.")
-    @Size(min = 2,message = "Content must be more than 2 charecters.")
+//    @NotEmpty(message = "Content Can not be Empty.")
+//    @Size(min = 2,message = "Content must be more than 2 charecters.")
     private String content;
     private String imageName;
     private Date addedDate;
