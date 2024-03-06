@@ -1,5 +1,6 @@
 package com.siyamuddin.blog.blogappapis.Controllers;
 
+import com.siyamuddin.blog.blogappapis.Config.AppConstants;
 import com.siyamuddin.blog.blogappapis.Payloads.ApiResponse;
 import com.siyamuddin.blog.blogappapis.Payloads.UserDto;
 import com.siyamuddin.blog.blogappapis.Services.UserService;
@@ -46,10 +47,19 @@ public class UserController {
       return new ResponseEntity<>(userDto,HttpStatus.OK);
   }
   @GetMapping("/")
-  public ResponseEntity<List<UserDto>> getAllUser()
+  public ResponseEntity<List<UserDto>> getAllUser(@RequestParam(value = "pageNumber",defaultValue = AppConstants.PAGE_NUMBER,required = false) Integer pageNumber,
+                                                  @RequestParam(value = "pageSize",defaultValue = AppConstants.PAGE_SIZE,required = false) Integer pageSize,
+                                                  @RequestParam(value = "sortBy",defaultValue = AppConstants.SORT_BY,required = false) String sortBy,
+                                                  @RequestParam(value = "sortDirec",defaultValue = AppConstants.SORT_DIREC,required = false) String sortDirec)
   {
-
-      return new ResponseEntity<>(this.userService.getAllUser(),HttpStatus.OK);
+      List<UserDto> userDtos=this.userService.getAllUser(pageNumber,pageSize,sortBy,sortDirec);
+      return new ResponseEntity<List<UserDto>>(userDtos,HttpStatus.OK);
   }
 
+@GetMapping("/search/{keywords}")
+    public ResponseEntity<List<UserDto>> searchUserByName(@PathVariable("keywords") String keywords)
+{
+    List<UserDto> userDtos=this.userService.searchUserByName(keywords);
+    return new ResponseEntity<List<UserDto>>(userDtos,HttpStatus.OK);
+}
 }

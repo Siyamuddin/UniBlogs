@@ -12,6 +12,6 @@ public interface CategoryService
     CategoryDto updateCategory(CategoryDto categoryDto, Integer categoryId);
     public void deleteCategory(Integer id);
     CategoryDto getCategory(Integer categoryId);
-    List<CategoryDto> getCategories();
+    List<CategoryDto> getCategories(Integer pageNumber,Integer pageSize,String sortBy,String sortDirec);
 
 }

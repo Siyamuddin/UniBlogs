@@ -1,5 +1,6 @@
 package com.siyamuddin.blog.blogappapis.Controllers;
 
+import com.siyamuddin.blog.blogappapis.Config.AppConstants;
 import com.siyamuddin.blog.blogappapis.Entity.Category;
 import com.siyamuddin.blog.blogappapis.Payloads.ApiResponse;
 import com.siyamuddin.blog.blogappapis.Payloads.CategoryDto;
@@ -45,10 +46,13 @@ public class CategoryController {
         return new ResponseEntity<CategoryDto>(categoryDto,HttpStatus.OK);
     }
     @GetMapping("/")
-    public ResponseEntity<List<CategoryDto>> getCategories()
+    public ResponseEntity<List<CategoryDto>> getCategories(@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+    @RequestParam(value = "pageSize",defaultValue = AppConstants.PAGE_SIZE,required = false) Integer pageSize,
+    @RequestParam(value = "sortBy",defaultValue = AppConstants.SORT_BY,required = false) String sortBy,
+    @RequestParam(value = "sortDirec",defaultValue = AppConstants.SORT_DIREC,required = false) String sortDirec)
     {
-        List<CategoryDto> categoryDtos=this.categoryService.getCategories();
-        return ResponseEntity.ok(categoryDtos);
+        List<CategoryDto> categoryDtos=this.categoryService.getCategories(pageNumber,pageSize,sortBy,sortDirec);
+        return new ResponseEntity<List<CategoryDto>>(categoryDtos,HttpStatus.OK);
     }
 
 }

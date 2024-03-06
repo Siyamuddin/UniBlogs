@@ -7,6 +7,10 @@ import com.siyamuddin.blog.blogappapis.Repository.CategoryRepo;
 import com.siyamuddin.blog.blogappapis.Services.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,8 +54,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getCategories() {
-        List<Category> categories=this.categoryRepo.findAll();
+    public List<CategoryDto> getCategories(Integer pagegeNumber, Integer pageSize,String sortBy, String sortDirec) {
+        Sort sort=null;
+        if(sortDirec.equalsIgnoreCase("asc"))
+        {
+            sort=Sort.by(sortBy).ascending();
+        }
+        else
+        {
+            sort=Sort.by(sortBy).descending();
+        }
+        Pageable pageable= PageRequest.of(pagegeNumber,pageSize,sort);
+        Page<Category> categories=this.categoryRepo.findAll(pageable);
+
+//        List<Category> categories=this.categoryRepo.findAll(sort);
         List<CategoryDto> catDtos=categories.stream().map((cat)->this.modelMapper.map(cat,CategoryDto.class)).collect(Collectors.toList());
 
         return catDtos;

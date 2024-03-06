@@ -2,16 +2,23 @@ package com.siyamuddin.blog.blogappapis.Services.Impl;
 
 import com.siyamuddin.blog.blogappapis.Entity.User;
 import com.siyamuddin.blog.blogappapis.Exceptions.ResourceNotFoundException;
+import com.siyamuddin.blog.blogappapis.Payloads.PostDto;
 import com.siyamuddin.blog.blogappapis.Payloads.UserDto;
 import com.siyamuddin.blog.blogappapis.Repository.UserRepo;
 import com.siyamuddin.blog.blogappapis.Services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -47,13 +54,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUser() {
-        List<User> users=userRepo.findAll();
-        List<UserDto> userDtos=new ArrayList<>();
-       for(int i=0;i<users.size();i++)
-       {
-           userDtos.add(userToUserDto(users.get(i)));
-       }
+    public List<UserDto> getAllUser(Integer pageNumber, Integer pageSize,String sortBy,String sortDirec) {
+        Sort sort=null;
+        if(sortDirec.equalsIgnoreCase("asc"))
+        {
+            sort=Sort.by(sortBy).ascending();
+        }
+        else
+        {
+            sort=Sort.by(sortBy).descending();
+        }
+        Pageable pageable= PageRequest.of(pageNumber,pageSize,sort);
+        Page<User> users=this.userRepo.findAll(pageable);
+
+        List<UserDto> userDtos=users.stream().map((user)->this.modelMapper.map(user,UserDto.class)).collect(Collectors.toList());
+
+//        List<User> users=userRepo.findAll();
+//        List<UserDto> userDtos=new ArrayList<>();
+//       for(int i=0;i<users.getSize();i++)
+//       {
+//           userDtos.add(userToUserDto(users.getContent().get(i)));
+//       }
 
         return userDtos;
     }
@@ -63,6 +84,13 @@ public class UserServiceImpl implements UserService {
         User user=userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User","ID",userId));
         userRepo.deleteById(userId);
 
+    }
+
+    @Override
+    public List<UserDto> searchUserByName(String name) {
+        List<User> users=this.userRepo.findByNameContaining(name);
+        List<UserDto> userDtos=users.stream().map((user)->modelMapper.map(user,UserDto.class)).collect(Collectors.toList());
+        return userDtos;
     }
 
     private User userDtoToUser(UserDto userDto)
