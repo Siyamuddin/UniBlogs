@@ -3,6 +3,7 @@ package com.siyamuddin.blog.blogappapis.Controllers;
 import com.siyamuddin.blog.blogappapis.Entity.Post;
 import com.siyamuddin.blog.blogappapis.Payloads.ApiResponse;
 import com.siyamuddin.blog.blogappapis.Payloads.PostDto;
+import com.siyamuddin.blog.blogappapis.Payloads.PostResponse;
 import com.siyamuddin.blog.blogappapis.Services.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +29,20 @@ public class PostController {
         return new ResponseEntity<PostDto>(createPostDto, HttpStatus.CREATED);
     }
     @GetMapping("/user/{userId}/posts")
-    public ResponseEntity<List<PostDto>> getPostByUser(@PathVariable Integer userId)
+    public ResponseEntity<PostResponse> getPostByUser(@PathVariable Integer userId,@RequestParam(value = "pageNumber",defaultValue = "0") Integer pageNumber,
+                                                      @RequestParam(value = "pageSize",defaultValue = "5") Integer pageSize)
     {
-        List<PostDto> postDtoList=this.postService.getPostByUser(userId);
-        return new ResponseEntity<List<PostDto>>(postDtoList,HttpStatus.OK);
+        PostResponse postResponse=this.postService.getPostByUser(userId,pageNumber,pageSize);
+        return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
     }
     @GetMapping("/category/{categoryId}/posts")
-    public ResponseEntity<List<PostDto>> getPostByCategory(@PathVariable Integer categoryId)
+    public ResponseEntity<PostResponse> getPostByCategory(@PathVariable Integer categoryId,
+    @RequestParam(value="pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+                                                           @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize
+    )
     {
-        List<PostDto> postDtoList=this.postService.getPostByCategory(categoryId);
-        return new ResponseEntity<List<PostDto>>(postDtoList,HttpStatus.OK);
+        PostResponse postResponse=this.postService.getPostByCategory(categoryId,pageNumber,pageSize);
+        return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
     }
     @GetMapping("/posts/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable Integer postId)
@@ -46,10 +51,11 @@ public class PostController {
         return new ResponseEntity<PostDto>(postDto,HttpStatus.OK);
     }
     @GetMapping("/posts")
-    public ResponseEntity<List<PostDto>> getAllPost()
+    public ResponseEntity<PostResponse> getAllPost(@RequestParam(value = "pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+                                                   @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize)
     {
-        List<PostDto> postDtos=this.postService.getAllPost();
-        return new ResponseEntity<List<PostDto>>(postDtos,HttpStatus.OK);
+        PostResponse postResponse=this.postService.getAllPost(pageNumber,pageSize);
+        return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
     }
     @DeleteMapping("/posts/{postId}")
     public ApiResponse deletePost(@PathVariable Integer postId)
