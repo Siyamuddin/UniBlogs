@@ -1,10 +1,14 @@
 package com.siyamuddin.blog.blogappapis.Payloads;
 
+import com.siyamuddin.blog.blogappapis.Entity.Role;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -22,4 +26,5 @@ public class UserDto {
     private String password;
     @NotEmpty
     private String about;
+    private Set<RoleDto> roles=new HashSet<>();
 }

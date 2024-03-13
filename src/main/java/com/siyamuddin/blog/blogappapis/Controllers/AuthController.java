@@ -2,12 +2,15 @@ package com.siyamuddin.blog.blogappapis.Controllers;
 
 import com.siyamuddin.blog.blogappapis.Entity.JwtRequest;
 import com.siyamuddin.blog.blogappapis.Entity.JwtResponse;
+import com.siyamuddin.blog.blogappapis.Payloads.UserDto;
 import com.siyamuddin.blog.blogappapis.Security.JwtHelper;
 
 
+import com.siyamuddin.blog.blogappapis.Services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +29,8 @@ public class AuthController {
     @Autowired
     private AuthenticationManager manager;
 
-
+    @Autowired
+    private UserService userService;
     @Autowired
     private JwtHelper helper;
 
@@ -64,5 +68,13 @@ public class AuthController {
     @ExceptionHandler(BadCredentialsException.class)
     public String exceptionHandler() {
         return "Credentials Invalid !!";
+    }
+
+    //register new user api
+    @PostMapping("/register")
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto)
+    {
+        UserDto registeredUser=this.userService.registerNewUser(userDto);
+        return new ResponseEntity<UserDto>(registeredUser,HttpStatus.CREATED);
     }
 }

@@ -1,9 +1,12 @@
 package com.siyamuddin.blog.blogappapis.Services.Impl;
 
+import com.siyamuddin.blog.blogappapis.Config.AppConstants;
+import com.siyamuddin.blog.blogappapis.Entity.Role;
 import com.siyamuddin.blog.blogappapis.Entity.User;
 import com.siyamuddin.blog.blogappapis.Exceptions.ResourceNotFoundException;
 import com.siyamuddin.blog.blogappapis.Payloads.PostDto;
 import com.siyamuddin.blog.blogappapis.Payloads.UserDto;
+import com.siyamuddin.blog.blogappapis.Repository.RoleRepo;
 import com.siyamuddin.blog.blogappapis.Repository.UserRepo;
 import com.siyamuddin.blog.blogappapis.Services.UserService;
 import org.modelmapper.ModelMapper;
@@ -13,10 +16,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +29,24 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private RoleRepo roleRepo;
+
+    @Override
+    public UserDto registerNewUser(UserDto userDto) {
+        User user=this.modelMapper.map(userDto,User.class);
+        //encoded password
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        //roles
+        Role role= this.roleRepo.findById(AppConstants.NORMAL_USER).get();
+        user.getRoles().add(role);
+        User newUser=this.userRepo.save(user);
+        return this.modelMapper.map(newUser,UserDto.class);
+    }
+
     @Override
     public UserDto createUser(UserDto userDto) {
     User user=this.userDtoToUser(userDto);
