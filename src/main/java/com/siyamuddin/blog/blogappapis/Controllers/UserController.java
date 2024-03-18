@@ -51,7 +51,7 @@ public class UserController {
   @GetMapping("/")
   public ResponseEntity<List<UserDto>> getAllUser(@RequestParam(value = "pageNumber",defaultValue = AppConstants.PAGE_NUMBER,required = false) Integer pageNumber,
                                                   @RequestParam(value = "pageSize",defaultValue = AppConstants.PAGE_SIZE,required = false) Integer pageSize,
-                                                  @RequestParam(value = "sortBy",defaultValue = AppConstants.SORT_BY,required = false) String sortBy,
+                                                  @RequestParam(value = "sortBy",defaultValue = "id",required = false) String sortBy,
                                                   @RequestParam(value = "sortDirec",defaultValue = AppConstants.SORT_DIREC,required = false) String sortDirec)
   {
       List<UserDto> userDtos=this.userService.getAllUser(pageNumber,pageSize,sortBy,sortDirec);
