@@ -4,6 +4,7 @@ import com.siyamuddin.blog.blogappapis.Config.AppConstants;
 import com.siyamuddin.blog.blogappapis.Payloads.ApiResponse;
 import com.siyamuddin.blog.blogappapis.Payloads.UserDto;
 import com.siyamuddin.blog.blogappapis.Services.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,17 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "JWT-Auth")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto)
-    {
-        UserDto createdUserDto= this.userService.createUser(userDto);
-        return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
-    }
+//    @PostMapping("/")
+//    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto)
+//    {
+//        UserDto createdUserDto= this.userService.createUser(userDto);
+//        return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
+//    }
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,@PathVariable Integer userId)
     {

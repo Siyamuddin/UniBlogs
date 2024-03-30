@@ -14,7 +14,6 @@ import java.util.Set;
 @Getter
 @Setter
 public class UserDto {
-    private int id;
     @NotEmpty
     @Size(min=3,message = "Please give a valid name which contains atleast 3 characters.")
     private String name;
@@ -22,9 +21,8 @@ public class UserDto {
     private String email;
     @NotEmpty
     @Size(min=8,max=16,message = "Your password must contain atleast 8 characters and less than 16 characters.")
-    @Pattern(regexp ="17@Siyam@17")
+    @Pattern(regexp ="123Aa@#")
     private String password;
     @NotEmpty
     private String about;
-    private Set<RoleDto> roles=new HashSet<>();
 }

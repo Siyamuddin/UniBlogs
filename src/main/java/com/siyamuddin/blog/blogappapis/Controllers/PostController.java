@@ -7,6 +7,7 @@ import com.siyamuddin.blog.blogappapis.Payloads.PostDto;
 import com.siyamuddin.blog.blogappapis.Payloads.PostResponse;
 import com.siyamuddin.blog.blogappapis.Services.FileService;
 import com.siyamuddin.blog.blogappapis.Services.PostService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
+@SecurityRequirement(name = "JWT-Auth")
 public class PostController {
     @Autowired
     private PostService postService;

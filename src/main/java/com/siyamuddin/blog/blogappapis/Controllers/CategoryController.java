@@ -5,6 +5,7 @@ import com.siyamuddin.blog.blogappapis.Entity.Category;
 import com.siyamuddin.blog.blogappapis.Payloads.ApiResponse;
 import com.siyamuddin.blog.blogappapis.Payloads.CategoryDto;
 import com.siyamuddin.blog.blogappapis.Services.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
+@SecurityRequirement(name = "JWT-Auth")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;

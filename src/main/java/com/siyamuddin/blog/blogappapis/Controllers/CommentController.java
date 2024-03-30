@@ -4,6 +4,7 @@ import com.siyamuddin.blog.blogappapis.Entity.User;
 import com.siyamuddin.blog.blogappapis.Payloads.ApiResponse;
 import com.siyamuddin.blog.blogappapis.Payloads.CommentDto;
 import com.siyamuddin.blog.blogappapis.Services.CommentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/comments")
+@SecurityRequirement(name = "JWT-Auth")
 public class CommentController {
     @Autowired
     private CommentService commentService;
