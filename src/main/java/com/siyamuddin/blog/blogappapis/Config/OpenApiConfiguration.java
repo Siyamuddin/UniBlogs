@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.servers.ServerVariable;
         ),
         servers = {@Server(
                 description = "Poduction Env",
-                url = "http://blogapi-env.eba-2gfrf2in.us-east-2.elasticbeanstalk.com/"
+                url = "https://uniblogs-production.up.railway.app/"
 
         )}
 )
