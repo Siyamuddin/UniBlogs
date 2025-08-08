@@ -30,13 +30,14 @@ public class UserController {
 //        UserDto createdUserDto= this.userService.createUser(userDto);
 //        return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
 //    }
-    @PutMapping("/{userId}")
+@PreAuthorize("@authz.canModifyUser(authentication,#userId)")
+@PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,@PathVariable Integer userId)
     {
         UserDto updatedUserDto=this.userService.updateUser(userDto,userId);
         return ResponseEntity.ok(updatedUserDto);
     }
-
+    @PreAuthorize("@authz.canModifyUser(authentication,#userId)")
     @DeleteMapping("/{userId}")
    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId)
    {

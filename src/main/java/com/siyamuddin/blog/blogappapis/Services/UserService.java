@@ -7,7 +7,6 @@ import java.util.List;
 @Service
 public interface UserService {
     UserDto registerNewUser(UserDto userDto);
-    UserDto createUser(UserDto user);
     UserDto updateUser(UserDto user, Integer userId);
     UserDto getUserById(Integer userId);
     List<UserDto> getAllUser(Integer pageNumber, Integer pageSize, String sortBy, String sortDirec);

@@ -21,7 +21,7 @@ public class UserDto {
     private String email;
     @NotEmpty
     @Size(min=8,max=16,message = "Your password must contain atleast 8 characters and less than 16 characters.")
-    @Pattern(regexp ="123Aa@#")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$")
     private String password;
     @NotEmpty
     private String about;

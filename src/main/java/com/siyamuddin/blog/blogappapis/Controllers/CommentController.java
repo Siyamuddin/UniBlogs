@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class CommentController {
         CommentDto commentDto1=this.commentService.createComment(commentDto,userId,postId);
         return new ResponseEntity<CommentDto>(commentDto1, HttpStatus.CREATED);
     }
+    @PreAuthorize("authz.canModifyComment(authentication,#commentId)")
     @PutMapping("/update/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@RequestBody CommentDto commentDto, @PathVariable Integer commentId)
     {
@@ -37,6 +39,7 @@ public class CommentController {
         CommentDto commentDto=this.commentService.getComment(commentId);
         return new ResponseEntity<CommentDto>(commentDto,HttpStatus.OK);
     }
+    @PreAuthorize("authz.canModifyComment(authentication,#commentId)")
     @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<ApiResponse> deleteComment(@PathVariable("commentId") Integer commentId)
     {

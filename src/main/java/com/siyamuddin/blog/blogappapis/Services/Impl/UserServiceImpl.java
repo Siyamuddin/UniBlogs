@@ -4,14 +4,14 @@ import com.siyamuddin.blog.blogappapis.Config.AppConstants;
 import com.siyamuddin.blog.blogappapis.Entity.Role;
 import com.siyamuddin.blog.blogappapis.Entity.User;
 import com.siyamuddin.blog.blogappapis.Exceptions.ResourceNotFoundException;
-import com.siyamuddin.blog.blogappapis.Payloads.PostDto;
+import com.siyamuddin.blog.blogappapis.Exceptions.UserAlreadyExists;
 import com.siyamuddin.blog.blogappapis.Payloads.UserDto;
 import com.siyamuddin.blog.blogappapis.Repository.RoleRepo;
 import com.siyamuddin.blog.blogappapis.Repository.UserRepo;
 import com.siyamuddin.blog.blogappapis.Services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,12 +19,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper modelMapper;
@@ -37,6 +37,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto registerNewUser(UserDto userDto) {
+        Optional<User> userCheck=userRepo.findByEmail(userDto.getEmail());
+        if(userCheck.isPresent()){
+            log.info("Duplicate user tried to login.");
+            throw new UserAlreadyExists(userCheck.get().getName(),userDto.getEmail());
+        }
+        else {
         User user=this.modelMapper.map(userDto,User.class);
         //encoded password
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
@@ -44,14 +50,7 @@ public class UserServiceImpl implements UserService {
         Role role= this.roleRepo.findById(AppConstants.NORMAL_USER).get();
         user.getRoles().add(role);
         User newUser=this.userRepo.save(user);
-        return this.modelMapper.map(newUser,UserDto.class);
-    }
-
-    @Override
-    public UserDto createUser(UserDto userDto) {
-    User user=this.userDtoToUser(userDto);
-    User savedUser=this.userRepo.save(user);
-    return this.userToUserDto(savedUser);
+        return this.modelMapper.map(newUser,UserDto.class);}
     }
 
     @Override
@@ -64,14 +63,14 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setAbout(userDto.getAbout());
         User user1=this.userRepo.save(user);
-        UserDto userDto1=this.userToUserDto(user1);
+        UserDto userDto1=this.modelMapper.map(user1, UserDto.class);
         return userDto1;
     }
 
     @Override
     public UserDto getUserById(Integer userId) {
         User user=userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User","ID",userId));
-        UserDto userDto=userToUserDto(user);
+        UserDto userDto=modelMapper.map(user, UserDto.class);
         return userDto;
     }
 
@@ -91,13 +90,6 @@ public class UserServiceImpl implements UserService {
 
         List<UserDto> userDtos=users.stream().map((user)->this.modelMapper.map(user,UserDto.class)).collect(Collectors.toList());
 
-//        List<User> users=userRepo.findAll();
-//        List<UserDto> userDtos=new ArrayList<>();
-//       for(int i=0;i<users.getSize();i++)
-//       {
-//           userDtos.add(userToUserDto(users.getContent().get(i)));
-//       }
-
         return userDtos;
     }
 
@@ -115,25 +107,4 @@ public class UserServiceImpl implements UserService {
         return userDtos;
     }
 
-    private User userDtoToUser(UserDto userDto)
-    {
-        User user=this.modelMapper.map(userDto,User.class);
-//        user.setId(userDto.getId());
-//        user.setName(userDto.getName());
-//        user.setEmail(userDto.getEmail());
-//        user.setPassword(userDto.getPassword());
-//        user.setAbout(userDto.getAbout());
-        return user;
-    }
-
-    private UserDto userToUserDto(User user)
-    {
-        UserDto userDto=this.modelMapper.map(user,UserDto.class);
-//        userDto.setId(user.getId());
-//        userDto.setName(user.getName());
-//        userDto.setEmail(user.getEmail());
-//        userDto.setPassword(user.getPassword());
-//        userDto.setAbout(user.getAbout());
-        return userDto;
-    }
 }

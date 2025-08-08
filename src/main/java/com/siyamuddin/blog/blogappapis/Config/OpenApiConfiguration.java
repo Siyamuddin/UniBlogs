@@ -25,7 +25,13 @@ import io.swagger.v3.oas.annotations.servers.ServerVariable;
                 description = "Poduction Env",
                 url = "https://uniblogs-production.up.railway.app/"
 
-        )}
+        ),
+                @Server(
+        description = "Dev Env",
+        url = "http://localhost:9090"
+
+)
+        }
 )
 @SecurityScheme(
         name = "JWT-Auth",

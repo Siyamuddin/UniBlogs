@@ -2,11 +2,13 @@ package com.siyamuddin.blog.blogappapis.Controllers;
 
 import com.siyamuddin.blog.blogappapis.Entity.JwtRequest;
 import com.siyamuddin.blog.blogappapis.Entity.JwtResponse;
+import com.siyamuddin.blog.blogappapis.Payloads.SecurityEventLogger;
 import com.siyamuddin.blog.blogappapis.Payloads.UserDto;
 import com.siyamuddin.blog.blogappapis.Security.JwtHelper;
 
 
 import com.siyamuddin.blog.blogappapis.Services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,21 +37,40 @@ public class AuthController {
     private JwtHelper helper;
 
     private Logger logger = LoggerFactory.getLogger(AuthController.class);
+    @Autowired
+    private SecurityEventLogger securityEventLogger;
 
-
+    // Update the login method:
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request, HttpServletRequest httpRequest) {
+        try {
+            this.doAuthenticate(request.getEmail(), request.getPassword());
 
-        this.doAuthenticate(request.getEmail(), request.getPassword());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+            String token = this.helper.generateToken(userDetails);
 
+            // Log successful login
+            securityEventLogger.logLoginAttempt(request.getEmail(), getClientIP(httpRequest), true);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = this.helper.generateToken(userDetails);
+            JwtResponse response = JwtResponse.builder()
+                    .jwtToken(token)
+                    .username(userDetails.getUsername()).build();
+            return new ResponseEntity<>(response, HttpStatus.OK);
 
-        JwtResponse response = JwtResponse.builder()
-                .jwtToken(token)
-                .username(userDetails.getUsername()).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (BadCredentialsException e) {
+            // Log failed login attempt
+            securityEventLogger.logLoginAttempt(request.getEmail(), getClientIP(httpRequest), false);
+            throw e;
+        }
+    }
+
+    // Add this helper method:
+    private String getClientIP(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 
     private void doAuthenticate(String email, String password) {

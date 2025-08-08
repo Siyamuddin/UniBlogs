@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,12 +80,14 @@ public class PostController {
         PostResponse postResponse=this.postService.getAllPost(pageNumber,pageSize,sortBy,sortDirec);
         return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
     }
+    @PreAuthorize("@authz.canModifyPost(authentication,#postId)")
     @DeleteMapping("/posts/{postId}")
     public ApiResponse deletePost(@PathVariable Integer postId)
     {
         this.postService.deletePost(postId);
         return new ApiResponse("This post has been deleted.",true);
     }
+    @PreAuthorize("@authz.canModifyPost(authentication,#postId)")
     @PutMapping("/posts/{postId}")
     public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto,@PathVariable Integer postId)
     {
